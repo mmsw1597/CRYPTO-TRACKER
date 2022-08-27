@@ -2,6 +2,66 @@
 
 React js를 활용한 코인 트래킹
 
+## styled-component
+
+1. React에서 CSS를 좀 더 편하게 등록하기 위한 컴포넌트. 실제 element로 변환될 때, 임의의 클래스 명을 부여한다.
+2. 인자 전달은 props를 이용하여 전달한다.
+
+```js
+const Box = styled.div`
+  background-color : ${(props) => props.bgColor};
+`
+<Box bhColor = "teal" />
+```
+
+3. 컴포넌트 확장
+
+```js
+const Box = styled.div`
+  background-color: ${(props) => props.bgColor};
+`;
+const Circle = styled(Box)``;
+```
+
+4. as라는 어트리뷰트로 태그 이름을 변경가능하다.
+5. 공통 어트리뷰트 부여. 아래 코드에서 Input 컴포넌트는 모두 required와 minlength 속성이 부여된다.
+
+```js
+const Input = styled.input.attrs({required: true, minLength: 10})`
+`
+<Input />
+<Input />
+<Input />
+<Input />
+```
+
+6. 애니메이션 적용
+
+```js
+const animation = keyframes`
+  from{
+  }
+  to{
+  }
+`;
+```
+
+7. pseudo selector
+
+```js
+const Box = styled.div`
+  span {
+    font-size: 36px;
+    &:hover {
+    }
+  }
+`;
+
+<Box>
+  <span></span>
+</Box>;
+```
+
 ## Type-Script
 
 1. JS의 strongly-typed 버전. 개발자로부터 코드 실행 이전에 에러를 발생시키거나 미리 알려주고 실수를 줄여주게끔 도와준다. 또한 자동 완성 기능이 강화된다.
@@ -30,6 +90,16 @@ interface CircleProps {
 function Circle({ bgColor }: CircleProps) {}
 ```
 
+7. TS에서 state 훅을 활용할때 초기값을 줄 경우, 그 초기값에 따라 데이터 타입을 인식한다.
+8. state값이 2가지 타입을 갖게 하기위해선 다음과 같이 하자. `const [value, setValue] = useState<number | string>(0)`
+9. TS에선 event의 타입에 대해서도 설명이 필요하다.
+
+```ts
+const onChange = (event: FormEvent<HTMLInputElement>) => {};
+```
+
+event는 Form으로부터 왔으며 onChange 이벤트 리스너가 InputElement에 의해 실행된다는 것을 설명하는 코드다. `SyntheticEvent`
+
 ## 요점 (2022-08-21)
 
 1. Fragment란 아무 기능과 의미 없는 유령 태그를 말한다.
@@ -42,3 +112,5 @@ function Circle({ bgColor }: CircleProps) {}
 3. React-query는 캐싱 매커니즘을 가졌기 때문에 한번 데이터를 가져오면 API를 다시 불러올 필요가 없다.
 4. 캐시 데이터를 보려면 `ReactQueryDevtools`를 사용하면 된다.
 5. 데이터를 차트로 시각화하는 JS char library인 `APEXCHARTS.JS`
+
+##
