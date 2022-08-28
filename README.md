@@ -115,7 +115,9 @@ event는 Form으로부터 왔으며 onChange 이벤트 리스너가 InputElement
 
 ## 요점 (2022-08-28)
 
-- Link 컴포넌트를 활용하여 다른 웹페이지에 state전달,매우 많은 프로퍼티를 가지고 있는 객체에 대하여 빠르게 type을 정의하는 방법, useLocation은 v6부터 as를 사용해야함.
+- Link 컴포넌트를 활용하여 다른 웹페이지에 state전달
+- 매우 많은 프로퍼티를 가지고 있는 객체에 대하여 빠르게 type을 정의하는 방법
+- useLocation은 v6부터 as를 사용해야함.
 
 1. state type 정의하기
 
