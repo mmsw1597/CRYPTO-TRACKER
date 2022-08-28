@@ -113,4 +113,42 @@ event는 Form으로부터 왔으며 onChange 이벤트 리스너가 InputElement
 4. 캐시 데이터를 보려면 `ReactQueryDevtools`를 사용하면 된다.
 5. 데이터를 차트로 시각화하는 JS char library인 `APEXCHARTS.JS`
 
-##
+## 요점 (2022-08-28)
+
+- Link 컴포넌트를 활용하여 다른 웹페이지에 state전달,매우 많은 프로퍼티를 가지고 있는 객체에 대하여 빠르게 type을 정의하는 방법, useLocation은 v6부터 as를 사용해야함.
+
+1. state type 정의하기
+
+```ts
+interface LocationTsx {
+  state: {
+    name: string;
+    id: string;
+    rank: number;
+  };
+}
+
+function Coin() {
+  const { coinId } = useParams();
+  const [loading, setLoading] = useState(true);
+  const { state } = useLocation() as LocationTsx;
+  console.log(state.name);
+}
+```
+
+URL로 부터 state를 받아올때는 `as`를 사용하여 state의 타입을 정의해주자.
+
+2. `Link`로 state 전달하기
+
+```ts
+<Link to={`/${coin.id}`} state={coin}>
+  <Img
+    src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+  />
+  {coin.name} &rarr;
+</Link>
+```
+
+이 방식의 문제점은 만약 유저가 다이렉트로 Link의 url에 접속하면 state를 전달해줄 이전 사이트를 거치지 않기 때문에 state가 출력되지 않는다.
+
+3. 옵셔널 체이닝
