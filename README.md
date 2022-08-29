@@ -154,3 +154,61 @@ URL로 부터 state를 받아올때는 `as`를 사용하여 state의 타입을 �
 이 방식의 문제점은 만약 유저가 다이렉트로 Link의 url에 접속하면 state를 전달해줄 이전 사이트를 거치지 않기 때문에 state가 출력되지 않는다.
 
 3. 옵셔널 체이닝
+
+## 요점 (2022-08-29)
+
+- v6에서 중첩 라우팅 구현.
+- useMatch 훅에 대하여
+- react query 사용법.
+
+1. 중첩 라우팅
+
+```ts
+<Route path="/:coinId" element={<Coin />}>
+  <Route path="price" element={<Price />} />
+  <Route path="Chart" element={<Chart />} />
+</Route>
+```
+
+이렇게 하고 Coin 컴포넌트내에 자식 컴포넌트가 위치할 곳에 Outlet 컴포넌트를 작성하면 된다.
+
+2. useMatch
+
+```ts
+const priceMatch = useMatch("/:coinId/price");
+```
+
+기본적으로 객체를 반환하는데, 특정 URL에 사용자가 접속해있으면 객체를 반환, 아니면 null을 반환. v6부터 useMatch 훅을 사용해야함.
+
+3. react query </br>
+   `npm i @tanstack/react-query` 해당 명령어로 설치 후, index.tsx에서 QueryClientProvider로 App 컴포넌트를 감싼다.
+
+```ts
+const queryClient = new QueryClient();
+
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+root.render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </QueryClientProvider>
+  </React.StrictMode>
+);
+```
+
+4. useQuery 훅
+
+```ts
+const { isLoading, data } = useQuery(["allCoins"], fetchCoins);
+```
+
+fetchCoins 함수는 별도로 만들어야함. 해당 함수는 프로미스를 반환. 그리고 객체를 반환하는데 `isLoading` 프로퍼티와 `data` 프로퍼티를 보유. 이름에서 유추할 수 있듯이 생각한 그 기능을 한다.
+
+5. 캐시데이터 직접 보기
+   `npm i @tanstack/react-query-devtools` 설치 -> App.tsx에 `import { ReactQueryDevtools } from "@tanstack/react-query-devtools";` -> Router 컴포넌트 밑에 devtools 컴포넌트 추가.
+
+6. url 파라미터 받기 `const { coinId } = useParams<keyof RouteParams>() as RouteParams;`
