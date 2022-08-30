@@ -206,9 +206,44 @@ root.render(
 const { isLoading, data } = useQuery(["allCoins"], fetchCoins);
 ```
 
-fetchCoins 함수는 별도로 만들어야함. 해당 함수는 프로미스를 반환. 그리고 객체를 반환하는데 `isLoading` 프로퍼티와 `data` 프로퍼티를 보유. 이름에서 유추할 수 있듯이 생각한 그 기능을 한다.
+fetchCoins 함수는 별도로 만들어야함. 해당 함수는 프로미스를 반환. 그리고 객체를 반환하는데 `isLoading` 프로퍼티와 `data` 프로퍼티를 보유. 첫번째 인자는 고유한 key값이고 배열로 전달.
+배열로 전달하기 때문에 고유한 값 전달에 용이하다.
 
 5. 캐시데이터 직접 보기
    `npm i @tanstack/react-query-devtools` 설치 -> App.tsx에 `import { ReactQueryDevtools } from "@tanstack/react-query-devtools";` -> Router 컴포넌트 밑에 devtools 컴포넌트 추가.
 
 6. url 파라미터 받기 `const { coinId } = useParams<keyof RouteParams>() as RouteParams;`
+
+## 요점 (2022-08-30)
+
+- V6 nested router에서 부모 컴포넌트가 자식에게 prop 전달하기.
+- Apex Chart
+- 주기적으로 리패치하기.
+- react-helmet
+
+1. 부모 컴포넌트에서 자식 컴포넌트로 프로퍼티 보내기</br>
+   부모 컴포넌트의 Outlet에 다음과 같이 coinId를 보내고 `<Outlet context={{coinId}}/>` -> 자식 컴포넌트에서 프로퍼티를 받는다.` const {coinId} = useOutletContext<ICoin>();`
+   주의할 점은 객체 타입으로 반환하기 때문에, 구조 분해 할당으로 받아야 하고, 인터페이스를 작성해야한다.
+
+2. Apex Chart에 들어간 후, 명령어 입력. 이후 import하고 ApexChart 컴포넌트를 원하는 위치에 삽입.
+
+3. 주기적으로 refetch하기 위해선 다음과 같이 입력
+
+```ts
+const { isLoading: tickersLoading, data: tickersData } =
+  useQuery<PriceInterface>(
+    ["tickers", coinId],
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000,
+    }
+  );
+```
+
+4. react-helmet을 이용하여 문서의 head 영역을 수정할 수 있다. title이나 favicon 등 수정가능.
+
+```ts
+<Helmet>
+  <title>Coins</title>
+</Helmet>
+```
