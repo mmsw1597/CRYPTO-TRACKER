@@ -64,9 +64,9 @@ const Box = styled.div`
 ```
 
 8. theme
-1. styled.d.ts 파일 생성 후 default theme interface 작성.
-2. theme provider import 후 각각 theme 작성.
-3. App.tsx에서 전체를 ThemeProvider 컴포넌트로 감쌈.
+- styled.d.ts 파일 생성 후 default theme interface 작성.
+- theme provider import 후 각각 theme 작성.
+- App.tsx에서 전체를 ThemeProvider 컴포넌트로 감쌈.
 
 ## Type-Script
 
