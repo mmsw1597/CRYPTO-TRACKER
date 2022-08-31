@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { fetchCoinHistory } from "./api";
 import ApexChart from "react-apexcharts";
+import { isDarkAtom } from "./atoms";
+import { useRecoilValue } from "recoil";
 
 interface IDate{
     time_open: number;
@@ -24,6 +26,7 @@ function Chart(){
 		{
 			refetchInterval: 10000,
 		});
+	const isDark = useRecoilValue(isDarkAtom);
 
     return (
 		<div>
@@ -35,7 +38,7 @@ function Chart(){
 			]} 
 			options={{
 				theme: {
-					mode: "dark",
+					mode: isDark ? "dark" : "light",
 				},
 				chart : {
 					height: 500,

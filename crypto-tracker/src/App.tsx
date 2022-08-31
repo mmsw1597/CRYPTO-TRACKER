@@ -1,6 +1,11 @@
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createGlobalStyle } from "styled-components";
 import Router from "./routes/Router";
+import { ThemeProvider } from "styled-components";
+import { darkTheme, lightTheme } from './theme';
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./routes/atoms";
 
 const GlobalStyle = createGlobalStyle`
   body{
@@ -20,11 +25,15 @@ const GlobalStyle = createGlobalStyle`
 `
 
 function App() {
+  const isDark = useRecoilValue(isDarkAtom);
+
   return (
     <>
-    <GlobalStyle/>
-    <Router/>
-    <ReactQueryDevtools initialIsOpen = {true}/>
+    <ThemeProvider theme ={isDark ? darkTheme : lightTheme}>
+      <GlobalStyle/>
+      <Router/>
+      <ReactQueryDevtools initialIsOpen = {true}/>
+    </ThemeProvider>
     </>
   );
 }
