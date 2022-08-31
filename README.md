@@ -247,3 +247,62 @@ const { isLoading: tickersLoading, data: tickersData } =
   <title>Coins</title>
 </Helmet>
 ```
+
+## 요점 (2022-08-31)
+
+- dark/light 모드 구현
+- function을 prop으로 전달하기.
+- v6 라우팅 버전에서 prop 전달하기
+- Recoil 적용
+
+1. prop으로 전달하려는 function에 마우스를 올리면 그 함수의 타입을 보여준다.
+
+```ts
+interface IRouteProps {
+  toggleDark: () => void;
+}
+
+function Router({ toggleDark }: IRouteProps) {}
+```
+
+2. 라우터에서 prop 전달하기
+
+```ts
+<Route path="/" element={<Coins toggleDark={toggleDark} />} />
+```
+
+3. recoil `npm install recoil` 명령어로 설치 후 index.tsx에서 다음과 같이 작성
+
+```ts
+<RecoilRoot>
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+</RecoilRoot>
+```
+
+이후 atom을 모아둔 파일을 따로 작성하여 저장한다.
+
+```ts
+import { atom } from "recoil";
+
+export const isDarkAtom = atom({
+  key: "isDark",
+  default: false,
+});
+```
+
+key는 고유한 값, default는 기본 값. 이후 App.tsx에서 useRecoilValue 훅으로 atom을 받아온다.
+
+```ts
+const isDark = useRecoilValue(isDarkAtom);
+```
+
+atom의 값을 변경시키려면 다음 훅을 사용
+
+```ts
+const setDarkAtom = useSetRecoilState(isDarkAtom);
+const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
+```
+
+기본적으로 useState의 set함수와 같은 함수를 반환함. 반환된 set함수는 useState set함수와 사용방법이 동일.
