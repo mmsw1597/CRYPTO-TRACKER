@@ -89,7 +89,7 @@ function Chart(){
 				}
 			}}/>
 		}
-	</div>
+		</div>
 	);
 }
 

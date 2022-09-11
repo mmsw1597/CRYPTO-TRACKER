@@ -1,43 +1,65 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, PathMatch, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "./api";
 import { Helmet } from "react-helmet";
 import { useSetRecoilState } from "recoil";
 import { isDarkAtom } from "./atoms";
+import Preview from "../components/Preview";
 
 const Container = styled.div`
     padding: 0px 20px;
-    max-width: 480px;
+    max-width: 1460px;
     margin: 0 auto;
+		width:100%;
 `;
 
 const Header = styled.header`
     font-size: 40px;
     height: 10vh;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 `;
 
-const CoinsList = styled.ul``;
+const CoinsList = styled.ul`
+    display:grid;
+    grid-template-columns : repeat(4, 4fr);
+    gap: 10px;
+		height: 400px;
+		overflow: scroll;
+		overflow-x:hidden;
+		padding-right: 10px;
+		width:100%;
 
-const Coin = styled.li`
+		&::-webkit-scrollbar {
+			width: 8px;
+			height: 8px;
+			border-radius: 6px;
+			background: rgba(255, 255, 255, 0.4);
+		}
+		&::-webkit-scrollbar-thumb {
+			background: rgba(0, 0, 0, 0.3);
+			border-radius: 6px;
+		}
+`;
+
+const Coin = styled.li<{match: boolean}>`
     background-color: white;
-    color: ${props=>props.theme.textColor};
+    color: ${props=> props.match ? props.theme.accentColor : props.theme.textColor};
     font-weight: 600;
     margin-bottom: 10px;
     border-radius: 10px;
-    a{
+    
         display:flex;
         align-items: center;
         padding: 20px;
+  
+    &:hover{    
+       color: ${(props) => props.theme.accentColor};
     }
-    &:hover{
-        a{
-            color: ${(props) => props.theme.accentColor};
-        }
-    }
+		cursor: pointer;
+		height:100%;
 `;
 
 const Title = styled.h1`
@@ -48,6 +70,13 @@ const Loader = styled.span`
     text-align: center;
     display:block;
 `;
+
+const Wrapper= styled.div`
+		display:flex;
+		align-items:flex-start;
+
+		width:100%;
+`
 
 interface CoinInterface{
     id: string,
@@ -65,11 +94,22 @@ const Img = styled.img`
     margin-right: 10px;
 `;
 
+const Box = styled.div`
+	background-image: linear-gradient( 135deg, #2AFADF 10%, #4C83FF 100%);
+	width:100px;
+	height:100px;
+`
 
 function Coins() {
     const {isLoading, data} = useQuery<CoinInterface[]>(["allCoins"], fetchCoins);
     const setDarkAtom = useSetRecoilState(isDarkAtom);
+		const navigate = useNavigate();
+		const coinMatch: PathMatch<string> | null = useMatch("/:id");
     const toggleDarkAtom = () => setDarkAtom(prev => !prev);
+
+		const onCoinClicked = (coinId : string) => {
+				navigate(`/${coinId}`);
+		}
 
     return (
     <Container>
@@ -81,16 +121,23 @@ function Coins() {
             <button onClick={toggleDarkAtom}>Toggle Mode</button>
         </Header>
         {isLoading ? (<Loader>Loading...</Loader>) :(
-          <CoinsList>
-            {data?.slice(0,100).map(coin => 
-            <Coin key ={coin.id}>
-              <Link to = {`/${coin.id}`} state = {coin}>
-                <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
-                {coin.name} &rarr;
-              </Link>      
-            </Coin>
-            )}
-         </CoinsList>)}
+					<Wrapper>
+						<Preview id = {coinMatch ? coinMatch.params.id : undefined}/>
+						<CoinsList>
+							{data?.slice(0,50).map(coin => 
+							<Coin
+							 match = {coinMatch?.params.id === coin.id ? true : false}
+							 key ={coin.id}
+							 onClick = {() => onCoinClicked(coin.id)}
+							>
+									<Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
+									{coin.name} &rarr;							      
+							</Coin>
+							)}
+						</CoinsList>
+					</Wrapper>
+				 )}
+				 <Box/>
     </Container>
     );
 }
