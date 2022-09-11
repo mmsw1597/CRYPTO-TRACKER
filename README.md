@@ -3,6 +3,7 @@
 React js를 활용한 코인 트래킹
 
 ## styled-component
+`npm i styled-components`
 
 1. React에서 CSS를 좀 더 편하게 등록하기 위한 컴포넌트. 실제 element로 변환될 때, 임의의 클래스 명을 부여한다.
 2. 인자 전달은 props를 이용하여 전달한다.
@@ -61,6 +62,11 @@ const Box = styled.div`
   <span></span>
 </Box>;
 ```
+
+8. theme
+- styled.d.ts 파일 생성 후 default theme interface 작성.
+- theme provider import 후 각각 theme 작성.
+- App.tsx에서 전체를 ThemeProvider 컴포넌트로 감쌈.
 
 ## Type-Script
 
