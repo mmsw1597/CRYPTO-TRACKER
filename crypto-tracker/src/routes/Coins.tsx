@@ -1,17 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, PathMatch, useMatch, useNavigate } from "react-router-dom";
+import { Link, Outlet, PathMatch, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { fetchCoins } from "./api";
 import { Helmet } from "react-helmet";
 import { useSetRecoilState } from "recoil";
 import { isDarkAtom } from "./atoms";
 import Preview from "../components/Preview";
+import Chart from "./Chart";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Container = styled.div`
     padding: 0px 20px;
     max-width: 1460px;
     margin: 0 auto;
 		width:100%;
+		height: 200vh;
 `;
 
 const Header = styled.header`
@@ -24,7 +28,7 @@ const Header = styled.header`
 
 const CoinsList = styled.ul`
     display:grid;
-    grid-template-columns : repeat(4, 4fr);
+    grid-template-columns : repeat(4, 1fr);
     gap: 10px;
 		height: 400px;
 		overflow: scroll;
@@ -74,7 +78,12 @@ const Loader = styled.span`
 const Wrapper= styled.div`
 		display:flex;
 		align-items:flex-start;
+		width:100%;
+`
 
+const ChartWrapper= styled.div`
+		display:flex;
+		flex-direction:column;
 		width:100%;
 `
 
@@ -94,14 +103,37 @@ const Img = styled.img`
     margin-right: 10px;
 `;
 
-const Box = styled.div`
-	background-image: linear-gradient( 135deg, #2AFADF 10%, #4C83FF 100%);
-	width:100px;
-	height:100px;
+const Attrs = styled.ul`
+	display: grid;
+	grid-template-columns : repeat(4, 1fr);
+	width:100%;
+	margin-top : 10px;
+	margin:30px auto;	
+`;
+
+const Attr = styled.button<{isSelected : boolean}>`
+	display: flex;
+	justify-content: center;
+	border:none;
+	align-items:center;
+	background-color: #ffa801;
+	height: 100px;
+	cursor: pointer;
+	font-size: 33px;
+	padding:20px;
+	color: ${props => props.isSelected? "rgba(255,255,255,1)" : "rgba(255,255,255,0.5)"};
+	margin:2px;
+`;
+
+const Text = styled.span`
+	margin-left : 10px;
 `
+
+
 
 function Coins() {
     const {isLoading, data} = useQuery<CoinInterface[]>(["allCoins"], fetchCoins);
+		const [attr,setAttr] = useState("close");
     const setDarkAtom = useSetRecoilState(isDarkAtom);
 		const navigate = useNavigate();
 		const coinMatch: PathMatch<string> | null = useMatch("/:id");
@@ -109,6 +141,10 @@ function Coins() {
 
 		const onCoinClicked = (coinId : string) => {
 				navigate(`/${coinId}`);
+		}
+
+		const onClickChartAttr = (attr : string) => {
+			setAttr(attr);
 		}
 
     return (
@@ -137,7 +173,32 @@ function Coins() {
 						</CoinsList>
 					</Wrapper>
 				 )}
-				 <Box/>
+				 <ChartWrapper>
+						<Attrs>
+							<Attr isSelected = {attr === "close"} onClick = {() => {onClickChartAttr("close")}}>
+								<span>
+									<FontAwesomeIcon icon="cloud-rain" size ="1x" /><Text>close</Text>
+								</span>
+							</Attr>
+							<Attr isSelected = {attr === "high"} onClick = {() => {onClickChartAttr("high")}}>
+								<span>
+									<FontAwesomeIcon icon="thunderstorm" size ="1x" /><Text>high</Text>
+								</span>
+							</Attr>
+							<Attr isSelected = {attr === "low"} onClick = {() => {onClickChartAttr("low")}}>
+								<span>
+									<FontAwesomeIcon icon="snowflake" size ="1x" /><Text>low</Text>
+								</span>
+							</Attr>
+							<Attr isSelected = {attr === "volume"} onClick = {() => {onClickChartAttr("volume")}}>
+								<span>
+									<FontAwesomeIcon icon="wind" size ="1x" /><Text>volume</Text>
+								</span>
+							</Attr>
+						</Attrs>
+						<Chart id = {coinMatch ? coinMatch.params.id : undefined} attr = {attr}/>
+				 </ChartWrapper>
+
     </Container>
     );
 }

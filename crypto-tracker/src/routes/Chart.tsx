@@ -4,6 +4,7 @@ import { fetchCoinHistory } from "./api";
 import ApexChart from "react-apexcharts";
 import { isDarkAtom } from "./atoms";
 import { useRecoilValue } from "recoil";
+import styled from "styled-components";
 
 interface IDate{
     time_open: number;
@@ -16,24 +17,36 @@ interface IDate{
     market_cap: number;
 }
 
-interface ICoin{
-    coinId: string;
+interface IPrice extends IDate{
+	[key : string] : string | number;
 }
 
-function Chart(){
-    const {coinId} = useOutletContext<ICoin>();
-    const {isLoading, data} = useQuery<IDate[]>(["ohlcv", coinId], () => fetchCoinHistory(coinId),
+interface ICoinId{
+    id : string | undefined;
+	attr : string;
+}
+
+const Wrapper = styled.div`
+	margin: 0 auto;
+	width: 90%;
+`;
+
+function Chart({id, attr} : ICoinId){
+    //const {coinId} = useOutletContext<ICoin>();
+    const {isLoading, data} = useQuery<IDate[]>(["ohlcv", id], () => fetchCoinHistory(id ?? ""),
 		{
 			refetchInterval: 10000,
 		});
+	
 	const isDark = useRecoilValue(isDarkAtom);
 
     return (
-		<div>
-			{isLoading ? "Loading chart..." : <ApexChart type ="line" series={[
+		<Wrapper>
+			{isLoading ? "Loading chart..." : id ?  
+			<ApexChart type ="line" series={[
 				{
 					name: "price",
-					data : data?.map(price => parseFloat(price.close)) ?? [],
+					data :  data?.map(price => parseFloat((price as IPrice)[attr] as string)) ?? [],	
 				}
 			]} 
 			options={{
@@ -41,38 +54,37 @@ function Chart(){
 					mode: isDark ? "dark" : "light",
 				},
 				chart : {
-					height: 500,
-					width: 500,
+					height: '100%',
+					width: '500px',
 					toolbar: {
 						show: false,
 					},
 					background : "transparent",
+					animations : {
+						enabled : false,
+					}
 				},
 				grid :{
-					show: false,
+					show: true,
 				},
 				stroke : {
 					curve: "smooth",
 					width: 5,
 				},
 				yaxis:{
-					show: false,
+					show: true,
 				},
 				xaxis:{
 					labels :{
-						show: false,
+						show: true,
 					},
 					axisTicks :{
-						show: false,
+						show: true,
 					},
 					axisBorder : {
-						show: false,
+						show: true,
 					},
-					type:"datetime",
-					categories: data?.map(price => {
-						const date = new Date(price.time_close*1000);
-						return `${date.getFullYear()}/${date.getMonth()+1}/${date.getDate()}`;
-					}),
+					
 				},
 				fill:{
 					type: "gradient",
@@ -83,13 +95,13 @@ function Chart(){
 					y:{
 						formatter : (value) => `$ ${value.toFixed(3)}`,
 					},
-					x:{
-
-					},
+				},
+				markers : {
+					size: 3,
 				}
 			}}/>
-		}
-		</div>
+		: "센서를 선택해"} 
+		</Wrapper>
 	);
 }
 

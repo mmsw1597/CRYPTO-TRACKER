@@ -120,7 +120,7 @@ function Preview({id} : ICoinId) {
         <Container>
             {id ? 
              <Wrapper>
-                <Title>{id}</Title>
+                <Title>{data?.name}</Title>
                 <ApexChart 
                 type = 'radialBar'
                 series= {[75]}
@@ -172,7 +172,7 @@ function Preview({id} : ICoinId) {
                     stroke: {
                         lineCap: "round"
                     },
-                    labels: ["Progress"]
+                    labels: ["whatever"]
                 }
             }
                 />
