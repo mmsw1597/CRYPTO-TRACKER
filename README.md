@@ -1,6 +1,6 @@
 # CRYPTO-TRACKER
 
-React js를 활용한 코인 트래킹
+React js를 활용한 코인 트래킹 클론 코딩이며 리액트 연습을 위함
 
 ## styled-component
 `npm i styled-components`
